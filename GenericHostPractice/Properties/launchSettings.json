@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "GenericHostPractice": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNETCORE_ENVIRONMENT": "Development",
+        "DATABASE_PASSWORD": "password"
+      }
+    }
+  }
+}
