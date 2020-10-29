@@ -1,5 +1,7 @@
-﻿using GenericHostPractice.Infrastructure.Settings;
+﻿using GenericHostPractice.Infrastructure.Database;
+using GenericHostPractice.Infrastructure.Settings;
 using GenericHostPractice.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,6 +22,24 @@ namespace GenericHostPractice
             {
                 // ホストを作成して実行
                 var host = CreateWebHostBuilder(args).Build();
+
+                // DBに初期値を登録
+                using (var scope = host.Services.CreateScope())
+                {
+                    var services = scope.ServiceProvider;
+                    try
+                    {
+                        // DBをマイグレーションする
+                        var context = services.GetRequiredService<AppDbContext>();
+                        context.Database.Migrate();
+                        // マスタデータの初期化が必要な場合、こういうクラスを作成する
+                        //DbInitializer.Initialize(context);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, "An error occurred while seeding the database.");
+                    }
+                }
 
                 host.Run();
             }
@@ -66,9 +86,6 @@ namespace GenericHostPractice
                 })
                 .ConfigureServices((services) =>
                 {
-                    //// DBコンテキストを設定する、マイグレをする時はここを確認する
-                    //MakeDbContext(services, configuration, envName);
-
                     // サービス処理のDI        
                     // 設定ファイルの読み込み
                     services.Configure<DefaultParameters>(configuration.GetSection("UserSettings"));
@@ -81,6 +98,12 @@ namespace GenericHostPractice
                     // メインロジック
                     // IHostedServiceを実装すると、AddHostedServiceで指定することで動かせる。
                     services.AddHostedService<Application>();
+
+                    // DB接続
+                    var constr = configuration.GetValue<string>($"ConnectionStrings:{SystemConstants.Connection}");
+                    services.AddDbContext<AppDbContext>(options =>
+                        options.UseSqlServer(constr, assembly => assembly.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName))
+                    );
                 })
                 .ConfigureLogging((context, config) =>
                 {
@@ -94,41 +117,6 @@ namespace GenericHostPractice
         }
         #endregion
 
-        //#region DBコンテキストを作成して、サービスに追加する、マイグレの時はここ
-        ///// <summary>
-        ///// DBコンテキストを作成して、サービスに追加する
-        ///// 環境によって分岐
-        ///// </summary>
-        ///// <param name="services"></param>
-        ///// <param name="configuration"></param>
-        ///// <param name="envName">DevelopmentかProduction</param>
-        //private static void MakeDbContext(IServiceCollection services, IConfiguration configuration, string envName)
-        //{
-        //    // appsettings.jsonから、使用するデータベースの接続文字列設定を取得
-        //    if (envName == SystemConstants.EnvDevelopment)
-        //    {
-        //        // 開発系はappsettingsから接続文字列とパスワードを取得する。
-        //        services.AddDbContext<ApplicationDbContext>(options =>
-        //        options.UseMySql(configuration.GetConnectionString(SystemConstants.Connection),
-        //            mySqlOptions =>
-        //            {
-        //                mySqlOptions.ServerVersion(new Version(10, 3, 13), ServerType.MariaDb);
-        //            }
-        //        ));
-        //    }
-        //    else
-        //    {
-        //        // 本番系は接続先をappsettingsから、パスワードを環境変数から取得する
-        //        services.AddDbContext<ApplicationDbContext>(options =>
-        //        options.UseMySql(configuration.GetConnectionString(SystemConstants.Connection) + "Password=" + configuration.GetValue<string>(SystemConstants.DbPasswordEnv) + ";",
-        //            mySqlOptions =>
-        //            {
-        //                mySqlOptions.ServerVersion(new Version(10, 3, 13), ServerType.MariaDb);
-        //            }
-        //        ));
-        //    }
-        //}
-        //#endregion
 
     }
 }
