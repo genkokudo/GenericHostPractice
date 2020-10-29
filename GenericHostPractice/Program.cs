@@ -11,6 +11,8 @@ using System;
 
 namespace GenericHostPractice
 {
+    // TODO:起動したらマイグレーションまで自動で行うので、appsettings.Development.jsonに接続文字列を設定すること。
+
     class Program
     {
         #region Main
@@ -32,8 +34,8 @@ namespace GenericHostPractice
                         // DBをマイグレーションする
                         var context = services.GetRequiredService<AppDbContext>();
                         context.Database.Migrate();
-                        // マスタデータの初期化が必要な場合、こういうクラスを作成する
-                        //DbInitializer.Initialize(context);
+                        // マスタデータを初期化する
+                        DbInitializer.Initialize(context);
                     }
                     catch (Exception ex)
                     {
