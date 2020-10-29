@@ -35,11 +35,5 @@ namespace GenericHostPractice
         /// </summary>
         public const string EnvProduction = "Production";
 
-        /// <summary>
-        /// システム名
-        /// データベース登録時に使用する
-        /// </summary>
-        public const string SystemName = "GenericHostPractice";
-
     }
 }

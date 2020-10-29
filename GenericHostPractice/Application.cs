@@ -51,7 +51,11 @@ namespace GenericHostPractice
             Logger.LogTrace("設定ファイルの内容を出力");
             Console.WriteLine(Configuration.GetValue<string>("aaaa:bbbb"));
             Console.WriteLine(Configuration.GetValue<string>("cccc"));
+            Logger.LogTrace("環境変数の内容を出力");
+            Console.WriteLine(Configuration.GetValue<string>("TEST"));
+
             // 実際の処理はここに書きます
+            Logger.LogTrace("ログレベルのテスト");
             Logger.Log(LogLevel.Trace, "Trace");
             Logger.Log(LogLevel.Debug, "Debug");
             Logger.Log(LogLevel.Information, "Information");
@@ -59,6 +63,9 @@ namespace GenericHostPractice
             Logger.Log(LogLevel.Error, "Error");
             Logger.Log(LogLevel.Critical, "Critical");
             Logger.Log(LogLevel.None, "None");
+
+            Logger.LogInformation("メインロジックからサービスの呼び出しを行います。");
+            MyService.MyServiceMethod();
 
             AppLifetime.StopApplication(); // 自動でアプリケーションを終了させる
         }

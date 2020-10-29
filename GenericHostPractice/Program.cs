@@ -1,4 +1,5 @@
-﻿using GenericHostPractice.Services;
+﻿using GenericHostPractice.Infrastructure.Settings;
+using GenericHostPractice.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -58,9 +59,9 @@ namespace GenericHostPractice
                     // 階層的な項目はconfiguration.GetValueの引数で、":"で区切って指定
                     // AddJsonFileで存在しなくても良い場合はoptional = trueを指定
                     configuration = configApp
-                        //.AddJsonFile("appsettings.json")
-                        //.AddJsonFile($"appsettings.{envName}.json")
-                        .AddEnvironmentVariables(prefix: SystemConstants.PrefixEnv)
+                        .AddJsonFile("appsettings.json")
+                        .AddJsonFile($"appsettings.{envName}.json")
+                        .AddEnvironmentVariables(prefix: SystemConstants.PrefixEnv) // "DOTNETCORE_"が付く環境変数を読み込む
                         .Build();
                 })
                 .ConfigureServices((services) =>
@@ -68,13 +69,15 @@ namespace GenericHostPractice
                     //// DBコンテキストを設定する、マイグレをする時はここを確認する
                     //MakeDbContext(services, configuration, envName);
 
-                    // サービス処理のDI
+                    // サービス処理のDI        
+                    // 設定ファイルの読み込み
+                    services.Configure<DefaultParameters>(configuration.GetSection("UserSettings"));
                     // ログ
                     services.AddLogging();
                     // テスト（シングルトンで追加する方法）
-                    services.AddSingleton<IMyService, MyService>();
+                    //services.AddSingleton<IMyService, MyService>();
                     // テスト（呼び出すたびにインスタンス作成する方法）
-                    //services.AddTransient<IMyService, MyService>();
+                    services.AddTransient<IMyService, MyService>();
                     // メインロジック
                     // IHostedServiceを実装すると、AddHostedServiceで指定することで動かせる。
                     services.AddHostedService<Application>();
@@ -84,7 +87,7 @@ namespace GenericHostPractice
                     // ここで設定すると、ILogger<各クラス名> loggerでインジェクションできる
                     // NLogを追加
                     config.ClearProviders();
-                    config.SetMinimumLevel(LogLevel.Trace);  //これがないと正常動作しない模様
+                    config.SetMinimumLevel(LogLevel.Trace);  //これがないと正常動作しない
                 })
                 // NLog を有効にする
                 .UseNLog();

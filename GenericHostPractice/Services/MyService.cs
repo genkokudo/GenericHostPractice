@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using GenericHostPractice.Infrastructure.Settings;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,10 +8,7 @@ using System.Text;
 namespace GenericHostPractice.Services
 {
     /// <summary>
-    /// サービスを作ってみるテスト
-    /// ここで外から呼ぶメソッドだけ定義していく
-    /// 何で本体クラスとインタフェースが1対1なんだろ？
-    /// 他のクラスにインジェクションする物だったらインタフェース作るって考えであってる？？
+    /// サービス
     /// </summary>
     public interface IMyService
     {
@@ -18,7 +17,7 @@ namespace GenericHostPractice.Services
         /// このメソッドを呼び出すことができる
         /// </summary>
         /// <returns></returns>
-        void MyServiceMethod();
+        public void MyServiceMethod();
     }
 
     /// <summary>
@@ -27,14 +26,19 @@ namespace GenericHostPractice.Services
     public class MyService : IMyService
     {
         ILogger<MyService> Logger { get; }
-        public MyService(ILogger<MyService> logger)
+        DefaultParameters Options { get; }
+
+        public MyService(ILogger<MyService> logger, IOptions<DefaultParameters> options)
         {
             // ここでインジェクションしたものをクラスフィールドに保持する
             Logger = logger;
+            Options = options.Value;
         }
         public void MyServiceMethod()
         {
-            Logger.LogTrace("aaaa");
+            Logger.LogTrace("IOptionsで設定内容を表示。");
+            Logger.LogTrace($"{Options.DefaultUser.Name}:{Options.DefaultUser.Age}");
+            Logger.LogTrace("MyServiceを実行しました。");
         }
     }
 }

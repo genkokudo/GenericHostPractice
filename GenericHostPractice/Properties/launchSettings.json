@@ -4,7 +4,8 @@
       "commandName": "Project",
       "environmentVariables": {
         "DOTNETCORE_ENVIRONMENT": "Development",
-        "DATABASE_PASSWORD": "password"
+        "DATABASE_PASSWORD": "password",
+        "DOTNETCORE_TEST": "ああああ"
       }
     }
   }
