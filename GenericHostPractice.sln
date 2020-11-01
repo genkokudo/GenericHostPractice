@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericHostPractice", "GenericHostPractice\GenericHostPractice.csproj", "{407C302A-8BC9-498B-AFE2-B20F33AD934A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenericHostPractice", "GenericHostPractice\GenericHostPractice.csproj", "{407C302A-8BC9-498B-AFE2-B20F33AD934A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLabo", "ServiceLabo\ServiceLabo.csproj", "{105B3F79-5089-4687-AD49-F48B3FFFC171}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{407C302A-8BC9-498B-AFE2-B20F33AD934A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{407C302A-8BC9-498B-AFE2-B20F33AD934A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{407C302A-8BC9-498B-AFE2-B20F33AD934A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{105B3F79-5089-4687-AD49-F48B3FFFC171}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{105B3F79-5089-4687-AD49-F48B3FFFC171}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{105B3F79-5089-4687-AD49-F48B3FFFC171}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{105B3F79-5089-4687-AD49-F48B3FFFC171}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
