@@ -97,6 +97,8 @@ namespace ServiceLabo
                     //services.AddSingleton<IMyService, MyService>();
                     // テスト（呼び出すたびにインスタンス作成する方法）
                     services.AddTransient<IMyService, MyService>();
+                    // PDF
+                    services.AddTransient<IPdfService, PdfService>();
                     // OCR
                     services.AddTransient<IOcrService, OcrService>();
                     // メインロジック

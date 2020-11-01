@@ -21,6 +21,20 @@ namespace ServiceLabo.Services
         /// <param name="filename">画像ファイル名</param>
         /// <returns>OCR結果</returns>
         public OcrResult Recognize(string filename);
+
+        /// <summary>
+        /// ストリームから画像を読み込む
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public Task<SoftwareBitmap> LoadImage(IRandomAccessStream stream);
+
+        /// <summary>
+        /// SoftwareBitmap内の文字を読み取る
+        /// </summary>
+        /// <param name="bitmap">SoftwareBitmap</param>
+        /// <returns>読み取った文字</returns>
+        public Task<string> BmpToString(SoftwareBitmap bitmap);
     }
 
     /// <summary>
@@ -48,7 +62,7 @@ namespace ServiceLabo.Services
         }
         private async Task<OcrResult> OcrMain(string filename)
         {
-            OcrEngine ocrEngine = OcrEngine.TryCreateFromUserProfileLanguages();
+            var ocrEngine = OcrEngine.TryCreateFromUserProfileLanguages();
             var bitmap = await LoadImage(filename);
             var ocrResult = await ocrEngine.RecognizeAsync(bitmap);
             return ocrResult;
@@ -65,7 +79,7 @@ namespace ServiceLabo.Services
             var bitmap = await LoadImage(stream);
             return bitmap;
         }
-        private async Task<SoftwareBitmap> LoadImage(IRandomAccessStream stream)
+        public async Task<SoftwareBitmap> LoadImage(IRandomAccessStream stream)
         {
             var decoder = await BitmapDecoder.CreateAsync(stream);
             var bitmap = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
@@ -82,6 +96,13 @@ namespace ServiceLabo.Services
             await dw.StoreAsync();
             await outputStream.FlushAsync();
             return randomAccessStream;
+        }
+
+        public async Task<string> BmpToString(SoftwareBitmap bitmap)
+        {
+            var ocrEngine = OcrEngine.TryCreateFromUserProfileLanguages();
+            var ocrResult = await ocrEngine.RecognizeAsync(bitmap);
+            return ocrResult.Text;
         }
     }
 }

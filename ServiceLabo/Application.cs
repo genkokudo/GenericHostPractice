@@ -17,9 +17,10 @@ namespace ServiceLabo
         private readonly IHostApplicationLifetime AppLifetime;
         IMyService MyService { get; }
         IOcrService OcrService { get; }
+        IPdfService PdfService { get; }
         IConfiguration Configuration { get; }
         ILogger<Application> Logger { get; }
-        public Application(IHostApplicationLifetime appLifetime, IMyService myService, IConfiguration configuration, ILogger<Application> logger, IOcrService ocrService)
+        public Application(IHostApplicationLifetime appLifetime, IMyService myService, IConfiguration configuration, ILogger<Application> logger, IOcrService ocrService, IPdfService pdfService)
         {
             // ここでインジェクションしたものをクラスフィールドに保持する
             AppLifetime = appLifetime;
@@ -27,11 +28,12 @@ namespace ServiceLabo
             Configuration = configuration;
             Logger = logger;
             OcrService = ocrService;
+            PdfService = pdfService;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            AppLifetime.ApplicationStarted.Register(OnStarted); // 最低限これだけあればバッチ処理としては成り立つ
+            AppLifetime.ApplicationStarted.Register(OnStartedAsync); // 最低限これだけあればバッチ処理としては成り立つ
 
             Logger.LogInformation("開始処理");
 
@@ -45,7 +47,7 @@ namespace ServiceLabo
             return Task.CompletedTask;
         }
 
-        private void OnStarted()
+        private async void OnStartedAsync()
         {
             Logger.LogInformation("メインロジック開始");
             Logger.LogTrace("設定ファイルの内容を出力");
@@ -70,6 +72,10 @@ namespace ServiceLabo
             Logger.LogInformation("OCRを行います。");
             var ocrResult = OcrService.Recognize("./Samples/sample.png");
             Logger.LogInformation($"OCR結果：{ocrResult.Text}");
+
+            Logger.LogInformation("PDF -> OCRを行います。");
+            var pdfResult = await PdfService.RecognizeAsync(".\\Samples\\sample.pdf");
+            Logger.LogInformation($"PDF -> OCR結果：{pdfResult}");
 
             AppLifetime.StopApplication(); // 自動でアプリケーションを終了させる
         }
