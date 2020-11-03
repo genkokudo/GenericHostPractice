@@ -74,7 +74,7 @@ namespace ServiceLabo
             Logger.LogInformation($"OCR結果：{ocrResult.Text}");
 
             Logger.LogInformation("PDF -> OCRを行います。");
-            var pdfResult = await PdfService.RecognizeAsync(".\\Samples\\sample.pdf");
+            var pdfResult = await PdfService.RecognizeAsync(".\\Samples\\sample.pdf", 0);
             Logger.LogInformation($"PDF -> OCR結果：{pdfResult}");
 
             AppLifetime.StopApplication(); // 自動でアプリケーションを終了させる

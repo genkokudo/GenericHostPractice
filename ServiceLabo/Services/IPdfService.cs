@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Windows.Data.Pdf;
 using Windows.Storage.Streams;
 
+// メモ：画像をBase64にしてクライアントに送る方法を調べておくこと。
+
 namespace ServiceLabo.Services
 {
     /// <summary>
